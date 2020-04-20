@@ -1,0 +1,15 @@
+'''
+- The following file will help you understand as to how to run our code.
+
+- Our datasets were downloaded from kaggle.
+	CelebA dataset : https://www.kaggle.com/jessicali9530/celeba-dataset (around 1 GB).
+	Celebrity-100k Dataset : https://www.kaggle.com/greg115/celebrities-100k (around 850 MB).
+
+- Load these datasets either to Google colab / kaggle to start working.
+
+- All the installations and tensorflow versions are mentioned in depend.txt
+- All versions are the same as the ones used in class.
+
+- All the code implementation is available within main.py and has no dependencies on any other files
+
+'''
