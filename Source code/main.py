@@ -103,6 +103,64 @@ inputShape = (64, 64, 3)  # 64x64 - RGB (conv2D layers)
 
 # building the graph
 
+def generator(noise, reuse=False, alpha=0.2, training=True):
+    """
+    Generator model that takes `noise` as input. `alpha` is the
+    Leaky-ReLU paramter for slope.
+    """
+    
+    with tf.variable_scope('generator', reuse=reuse):
+        
+        x = dense(noise, 4*4*512)
+        x = tf.reshape(x, (-1, 4, 4, 512))
+        x = batch_normalization(x, training=training)
+        x = tf.maximum(alpha*x, x)
+        
+        x = conv2d_transpose(x, 256, 5, 2, padding='same')
+        x = batch_normalization(x, training=training)
+        x = tf.maximum(alpha*x, x)
+        
+        x = conv2d_transpose(x, 128, 5, 2, padding='same')
+        x = batch_normalization(x, training=training)
+        x = tf.maximum(alpha*x, x)
+        
+        x = conv2d_transpose(x, 64, 5, 2, padding='same')
+        x = batch_normalization(x, training=training)
+        x = tf.maximum(alpha*x, x)
+        
+        logits = conv2d_transpose(x, 3, 5, 2, padding='same')
+        out = tf.tanh(logits)
+        
+        return out
+
+def discriminator(x, reuse=False, alpha=0.2, training=True):
+    """
+    Discriminator model, taking `x` as input.
+    """
+    
+    with tf.variable_scope('discriminator', reuse=reuse):
+        
+        x = conv2d(x, 32, 5, 2, padding='same')
+        x = tf.maximum(alpha*x, x)
+        
+        x = conv2d(x, 64, 5, 2, padding='same')
+        x = batch_normalization(x, training=training)
+        x = tf.maximum(alpha*x, x)
+        
+        x = conv2d(x, 128, 5, 2, padding='same')
+        x = batch_normalization(x, training=training)
+        x = tf.maximum(alpha*x, x)
+        
+        x = conv2d(x, 256, 5, 2, padding='same')
+        x = batch_normalization(x, training=training)
+        x = tf.maximum(alpha*x, x)        
+        
+        flatten = tf.reshape(x, (-1, 4*4*256))
+        logits = dense(flatten, 1)
+        out = tf.sigmoid(logits)
+        
+        return logits
+
 tf.reset_default_graph()
 
 realInput, noisyInput = inputs(inputShape, noiseSize)
